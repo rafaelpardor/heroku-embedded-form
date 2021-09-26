@@ -4,12 +4,13 @@
   "repository": "",
   "keywords": ["lyra", "python", "flask"],
   "scripts": {
-    "postdeploy": "gunicorn wsgi:app --workers 4 --bind 0.0.0.0:5000 --limit-request-line 16000"
+    "postdeploy": "python wsgi.py"
   },
   "env": {
     "test_mode": {
       "description": "",
-      "required": true
+      "required": true,
+      "value": "True"
     },
     "rest_static_url": {
       "description": "This URL needs to be changed according to your payment provider or your region.",
