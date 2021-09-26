@@ -3,9 +3,6 @@
   "description": "Backend with Flask for the Embedded Form example.",
   "repository": "",
   "keywords": ["lyra", "python", "flask"],
-  "scripts": {
-    "postdeploy": "python wsgi.py"
-  },
   "env": {
     "test_mode": {
       "description": "",
