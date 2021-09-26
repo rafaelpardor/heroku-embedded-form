@@ -1,0 +1,33 @@
+transactionalParameters:
+  amount: 5000
+  currency: [
+    "COP - Colombian peso",
+    "USD - US dollar",
+    "CAD - Canadian dollar",
+    "DDK - Danish crown",
+    "JPY - Japanese yen",
+    "NOK - Norwegian crown",
+    "EUR - Euro"
+  ]
+  formAction: ""
+  orderId: "myOrderId-123123"
+  taxRate: 19
+  customer:
+    email: "sample@example.com"
+    reference: "321"
+  subMerchantDetails:
+    address1: "address1"
+    address2: "address2"
+    zip: "123456"
+    country: "CO"
+    name: "sotre1"
+  transactionOptions:
+    cardOptions:
+      paymentSource: ""
+      retry: 2
+      debitCreditSelector: ""
+      firstInstallmentDelay: ""
+      installmentNumber: ""
+      captureDelay: ""
+      manualValidation: ""
+      mid: ""

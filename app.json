@@ -1,0 +1,51 @@
+{
+  "name": "Lyra Backend Flask",
+  "description": "Backend with Flask for the Embedded Form example.",
+  "repository": "",
+  "keywords": ["lyra", "python", "flask"],
+  "scripts": {
+    "postdeploy": "gunicorn wsgi:app --workers 4 --bind 0.0.0.0:5000 --limit-request-line 16000"
+  },
+  "env": {
+    "test_mode": {
+      "description": "",
+      "required": true
+    },
+    "rest_static_url": {
+      "description": "This URL needs to be changed according to your payment provider or your region.",
+      "required": true
+    },
+    "rest_server_api_url": {
+      "description": "This URL needs to be changed according to your payment provider or your region.",
+      "required": true
+    },
+    "shop_id": {
+      "description": "",
+      "required": true
+    },
+    "test_password": {
+      "description": "",
+      "required": true
+    },
+    "test_public_key": {
+      "description": "",
+      "required": true
+    },
+    "test_hmac_sha_256_key": {
+      "description": "",
+      "required": true
+    },
+    "prod_password": {
+      "description": "",
+      "required": false
+    },
+    "prod_public_key": {
+      "description": "",
+      "required": false
+    },
+    "prod_hmac_sha_256_key": {
+      "description": "",
+      "required": false
+    }
+  }
+}
