@@ -66,7 +66,7 @@ def get_form_token():
     api_url = request.form.get('rest_api_server_name') if request.form.get('rest_api_server_name') is None else os.environ['rest_api_server_name']
     send_body = service.new_body_to_send(transactional_parameters)
 
-    CONTRIB = f"Python_Flask_Embedded_Examples_2.x_1.0.0/{flask.__version__}/{sys.version[:5]}"
+    CONTRIB = f"API - Python_Flask_Embedded_Examples_2.x_1.0.0/{flask.__version__}/{sys.version[:5]}"
     send_body['contrib'] = CONTRIB
 
     app.logger.info(json.dumps(send_body, indent=4))
@@ -75,8 +75,10 @@ def get_form_token():
 
 
 @app.route("/transaction-success", methods=['GET'])
-def check_status():
-    pass
+def transaction_success():
+    return render_template(
+        'loading_screen.html'
+    )
 
 
 @app.route("/transaction-refused", methods=['GET'])

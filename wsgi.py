@@ -1,11 +1,13 @@
 import os, logging
+
+from dotenv import load_dotenv
+
 from main import app
-# from dotenv import load_dotenv, dotenv_values
 
-# load_dotenv('.env')
-
+load_dotenv(".env")
 
 if __name__ == "__main__":
-    app.debug=True
-    app.run()
+    app.debug = os.environ['test_mode']
+    PORT = os.environ['port'] if os.environ['port'] == None else 5000
+    app.run(port=PORT)
     logging.basicConfig(filename='lyra.log', level=logging.DEBUG)
