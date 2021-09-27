@@ -1,11 +1,11 @@
 {
   "name": "Lyra Backend Flask",
   "description": "Backend with Flask for the Embedded Form example.",
-  "repository": "",
+  "repository": "https://github.com/rafaelpardor/heroku-embedded-form",
   "keywords": ["lyra", "python", "flask"],
   "env": {
     "test_mode": {
-      "description": "",
+      "description": "Set the app into test mode. By default is True.",
       "required": true,
       "value": "True"
     },
