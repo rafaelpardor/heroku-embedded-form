@@ -1,1 +1,1 @@
-web: gunicorn wsgi:app --limit-request-line 16000
+web: gunicorn wsgi:app --limit-request-line 16000 --workers 4
