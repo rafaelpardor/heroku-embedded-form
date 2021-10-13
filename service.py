@@ -51,11 +51,12 @@ def new_body_to_send(obj_dict):
     """
     Create a new object with the incoming data from the form
     """
+    made_request = request.form if len(request.form) != 0 else request.json
     new_body = {}
     for value in obj_dict.keys():
         try:
-            if request.form[value] != "null":
-                new_body[value] = request.form[value]
+            if made_request[value] != "null":
+                new_body[value] = made_request[value]
         except KeyError:
             app.logger.error(f'"{value}" not found or is a key.')
             pass
