@@ -9,42 +9,11 @@
   <title>Lyra - Embedded form with Flask</title>
 </head>
 
-{% macro load_form(form) %}
-  {% for field in form %}
-    {% if form[field] is mapping %}
-      {{ load_form(form[field]) }}
-    {% else %}
-      {% if field == "currency" %}
-        <label>{{ field }}</label><br>
-        <select name={{ field }} id={{ field }} required>
-          {% for currency in form[field] %}
-            <option value={{ currency[:3] }}>{{ currency }}</option>
-          {% endfor %}
-        </select>
-        <br>
-      {% else %}
-        <label>{{ field }}</label><br>
-        <input name={{ field }} type="text" value={{ form[field] }}><br>
-      {% endif %}
-    {% endif %}
-  {% endfor %} 
-{% endmacro %}
-
 <body>
-  <form class="form" id="lyraForm" action="/embedded-form" method="post">
-    <br>
-    {{ load_form(form) }}
-    <br>
-    <h6>Activate kr-popin</h6>
-    <label class="switch">
-      <input type="checkbox" name="kr-popin" value="True">
-      <div class="slider"></div>
-    </label>
-    <br>
-    <br>
-
-    <input class="btn btn-primary" type="submit" value="Submit">
-  </form>
+  <div class="index">
+    <a href="/embedded-form-page"><button type="button">Go to Embedded Form Page</button></a>
+    <a href="/redirection-form-page"><button type="button">Go to Redirection Form Page</button></a>
+  </div>
 </body>
 
 </html>

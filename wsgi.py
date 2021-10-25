@@ -6,8 +6,10 @@ from main import app
 
 load_dotenv(".env")
 
+TEST_MODE = os.environ['test_mode']
+
 if __name__ == "__main__":
-    app.debug = os.environ['test_mode']
-    PORT = os.environ['port'] if os.environ['port'] == None else 5000
+    app.debug = TEST_MODE
+    PORT = 5000
     app.run(port=PORT)
     logging.basicConfig(filename='lyra.log', level=logging.DEBUG)

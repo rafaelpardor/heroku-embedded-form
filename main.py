@@ -6,13 +6,26 @@ from flask import Flask, render_template, request, redirect
 from dotenv import load_dotenv
 import flask
 import requests
+from flask_cors import CORS
 
 import service
 
 
 app = Flask(__name__)
-
 load_dotenv(".env")
+CORS(app)
+
+REST_STATIC_URL = os.environ["rest_static_url"]
+REST_SERVER_API_URL = os.environ["rest_server_api_url"]
+SHOP_ID = os.environ["shop_id"]
+TEST_MODE = os.environ['test_mode']
+TEST_PASSWORD = os.environ["test_password"]
+TEST_HMAC_SHA_256_KEY = os.environ["test_hmac_sha_256_key"]
+TEST_PUBLIC_KEY = os.environ["test_public_key"]
+PRODUCTION_PASSWORD = os.environ["prod_public_key"]
+PRODUCTION_HMAC_SHA_256_KEY = os.environ["prod_hmac_sha_256_key"]
+PRODUCTION_PUBLIC_KEY = os.environ["prod_public_key"]
+RETRY = int(os.environ["retry"])
 
 try:
     variables_model = service.read_yaml('./model.yaml')
@@ -22,9 +35,7 @@ except FileNotFoundError:
 
 transactional_parameters = variables_model['transactionalParameters']
 
-transactional_parameters.pop('subMerchantDetails')
-#transactional_parameters.pop('transactionOptions')
-
+transactional_parameters['customer'].pop("billingDetails")
 
 @app.route("/", methods=['GET'])
 def index():
@@ -50,9 +61,9 @@ def get_embedded():
     """
     form_token = request.args.get('form-token')
     return render_template(
-        'embedded_form.html', 
-        rest_static_url=os.environ['rest_static_url'],
-        kr_public_key=os.environ['test_public_key'] if os.environ['test_mode'] else os.environ['prod_public_key'],
+        'embedded_form_get.html', 
+        rest_static_url=REST_STATIC_URL,
+        kr_public_key=TEST_PUBLIC_KEY if TEST_MODE else PRODUCTION_PUBLIC_KEY,
         kr_popin=True if request.form.get('kr-popin') else False,
         formToken=form_token, 
     )
@@ -63,11 +74,13 @@ def get_form_token():
     """
     '/get-form-token' will only generate the form token
     """
-    api_url = request.form.get('rest_api_server_name') if request.form.get('rest_api_server_name') is None else os.environ['rest_api_server_name']
+    api_url = REST_SERVER_API_URL
     send_body = service.new_body_to_send(transactional_parameters)
 
     CONTRIB = f"API - Python_Flask_Embedded_Examples_2.x_1.0.0/{flask.__version__}/{sys.version[:5]}"
     send_body['contrib'] = CONTRIB
+    if "retry" not in send_body['transactionOptions']['cardOptions']:
+        send_body['transactionOptions']['cardOptions']['retry'] = RETRY 
 
     app.logger.info(json.dumps(send_body, indent=4))
     form_token = create_form_token(json.dumps(send_body), api_url)
@@ -83,7 +96,9 @@ def transaction_success():
 
 @app.route("/transaction-refused", methods=['GET'])
 def transaction_refused():
-    pass
+    return render_template(
+        'loading_screen.html'
+    )
 
 
 @app.route("/embedded-form", methods=['POST'])
@@ -91,11 +106,13 @@ def embedded_form():
     """
     Will create the form_token and load the embedded form at the same time
     """
-    api_url = os.environ['rest_server_api_url']
+    api_url = REST_SERVER_API_URL
     send_body = service.new_body_to_send(transactional_parameters)
 
     CONTRIB = f"Python_Flask_Embedded_Examples_2.x_1.0.0/{flask.__version__}/{sys.version[:5]}"
     send_body['contrib'] = CONTRIB
+    if "retry" not in send_body['transactionOptions']['cardOptions']:
+        send_body['transactionOptions']['cardOptions']['retry'] = RETRY 
 
     app.logger.info(json.dumps(send_body, indent=4))
     form_token = create_form_token(json.dumps(send_body), api_url)
@@ -104,9 +121,9 @@ def embedded_form():
         return render_template('error.html')
 
     return render_template(
-        'embedded_form.html', 
-        rest_static_url=os.environ['rest_static_url'],
-        kr_public_key=os.environ['test_public_key'] if os.environ['test_mode'] else os.environ['prod_public_key'],
+        'embedded_form_post.html', 
+        rest_static_url=REST_STATIC_URL,
+        kr_public_key=TEST_PUBLIC_KEY if TEST_MODE else PRODUCTION_PUBLIC_KEY,
         kr_popin=True if request.form.get('kr-popin') else False,
         formToken=form_token, 
     )
@@ -121,10 +138,10 @@ def capture_ipn():
         return "KO - Invalid request.", 400
 
     app.logger.info(json.dumps(json.loads(request.form.get('kr-answer').replace('"', '\"')), indent=4))
-    signature = service.compute_hmac_sha256_signature(
-        os.environ['test_password'] if os.environ['test_mode'] else os.environ['prod_password'],
-        request.form.get('kr-answer')
-    )
+    key = TEST_PASSWORD if TEST_MODE else PRODUCTION_PASSWORD
+    message = request.form.get('kr-answer')
+    signature = service.compute_hmac_sha256_signature(key, message)
+
     if signature != request.form.get('kr-hash'):
         return "KO - Signatures does not match.", 401
 
@@ -138,10 +155,10 @@ def redirect_():
     Redirect will proceed with the payment, and will either succeed or refused the payment.
     """
     if request.args.get('status') == 'success':
-        signature = service.compute_hmac_sha256_signature(
-            os.environ['test_hmac_sha_256_key'] if os.environ['test_mode'] else os.environ['prod_hmac_sha_256_key'],
-            request.form.get('kr-answer')
-        )
+        key = TEST_HMAC_SHA_256_KEY if TEST_MODE else PRODUCTION_HMAC_SHA_256_KEY
+        message = request.form.get('kr-answer')
+        signature = service.compute_hmac_sha256_signature(key, message)
+
         app.logger.info(json.dumps(json.loads(request.form.get('kr-answer').replace('"', '\"')),indent=4))
 
         return render_template(
@@ -159,12 +176,12 @@ def create_form_token(entry_body, url=None):
     """
     Create form token to load the payment method
     """
-    shop_id = os.environ['shop_id']
-    password = os.environ['test_password'] if os.environ['test_mode'] else os.environ['prod_password']
+    shop_id = SHOP_ID
+    password = TEST_PASSWORD if TEST_MODE else PRODUCTION_PASSWORD
     string_to_encode = f"{shop_id}:{password}"
 
     if url == None:
-        create_payment_url = f"{os.environ['rest_server_api_url']}V4/Charge/CreatePayment"
+        create_payment_url = f"{REST_SERVER_API_URL}V4/Charge/CreatePayment"
     else:
         create_payment_url = f"{url}V4/Charge/CreatePayment"
 

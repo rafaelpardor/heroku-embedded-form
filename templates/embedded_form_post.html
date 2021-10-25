@@ -4,17 +4,25 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-  <script {% set first_url=rest_static_url~"js/krypton-client/V4.0/stable/kr-payment-form.min.js" %} src={{ first_url }}
-    kr-public-key={{ kr_public_key }} kr-post-url-success="/redirect?status=success"
-    kr-post-url-refused="/redirect?statys=refused">
+  <script 
+    {% set first_url=rest_static_url~"js/krypton-client/V4.0/stable/kr-payment-form.min.js" %} 
+    src={{ first_url }}
+    kr-public-key={{ kr_public_key }} 
+    kr-post-url-success="/redirect?status=success" 
+    kr-post-url-refused="/redirect?status=refused"
+  >
   </script>
 
-  <link rel="stylesheet" {% set second_url=rest_static_url~"js/krypton-client/V4.0/ext/classic-reset.css" %}
-    href={{ second_url }}>
-  <script {% set third_url=rest_static_url~"js/krypton-client/V4.0/ext/classic.js" %} src={{ third_url }}>
+  <link rel="stylesheet" 
+    {% set second_url=rest_static_url~"js/krypton-client/V4.0/ext/classic-reset.css" %} 
+    href={{ second_url }}
+  >
+  <script 
+    {% set third_url=rest_static_url~"js/krypton-client/V4.0/ext/classic.js" %} 
+    src={{ third_url }}
+  >
   </script>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
@@ -40,7 +48,7 @@
 
     <br>
     <a href="/"><button class="go-back_button">Go back to index</button></a>
-  </div>
+</div>
 
 </body>
 

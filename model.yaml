@@ -15,19 +15,15 @@ transactionalParameters:
   customer:
     email: "sample@example.com"
     reference: "321"
-  subMerchantDetails:
-    address1: "address1"
-    address2: "address2"
-    zip: "123456"
-    country: "CO"
-    name: "sotre1"
+    billingDetails:
+      firstName: ""
+      lastName: ""
+      phoneNumber: ""
+      address: ""
+      address2: ""
+      zipCode: ""
+      city: ""
+      country: ""
   transactionOptions:
     cardOptions:
-      paymentSource: ""
-      retry: 2
-      debitCreditSelector: ""
-      firstInstallmentDelay: ""
-      installmentNumber: ""
-      captureDelay: ""
-      manualValidation: ""
-      mid: ""
+      retry: ""
